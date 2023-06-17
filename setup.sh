@@ -34,7 +34,7 @@ BUCKET_NAME="the-odds-api"
 BUCKET_LOCATION="us"
 
 # The name of the Google BigQuery Dataset.
-DATASET_ID="the-odds-api"
+DATASET_ID="the_odds_api"
 
 
 echo Log in using browser.
