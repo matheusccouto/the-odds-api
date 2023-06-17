@@ -42,4 +42,4 @@ jobs:
             --source_format=NEWLINE_DELIMITED_JSON \
             --autodetect \
             the_odds_api.odds \
-            gs://the-odds-api/${{ inputs.sport_key }}/${{ steps.extract.outputs.timestamp }}.json
+            gs://the-odds-api/${{ inputs.sport_key }}/${{ steps.timestamp.outputs.timestamp }}.json
