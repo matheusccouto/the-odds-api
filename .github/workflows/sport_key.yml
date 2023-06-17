@@ -28,5 +28,5 @@ jobs:
     strategy:
       matrix: ${{fromJSON(needs.sport_key.outputs.matrix)}}
     with:
-      sport_key: football/predictions/probabilities
+      sport_key: ${{ matrix.sport_key }}
     secrets: inherit
