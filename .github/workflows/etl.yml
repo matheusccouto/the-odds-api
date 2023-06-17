@@ -3,15 +3,9 @@ name: ETL
 on:
   workflow_call:
     inputs:
-      endpoint:
+      sport_key:
         required: true
         type: string
-      table:
-        required: true
-        type: string
-      # schema:
-      #   required: true
-      #   type: string
 
 permissions:
   contents: read
@@ -25,25 +19,26 @@ jobs:
 
       - uses: google-github-actions/auth@v1
         with:
-          workload_identity_provider: projects/108686647178/locations/global/workloadIdentityPools/github-sportmonks/providers/github
-          service_account: github-sportmonks@matheusccouto.iam.gserviceaccount.com
+          workload_identity_provider: projects/108686647178/locations/global/workloadIdentityPools/github-the-odds-api/providers/github
+          service_account: github-the-odds-api@matheusccouto.iam.gserviceaccount.com
 
       - uses: google-github-actions/setup-gcloud@v1
 
+      - id: timestamp
+        name: Timestamp
+        run: |
+          TIMESTAMP=$(date +%s)
+          echo timestamp=$TIMESTAMP >> $GITHUB_OUTPUT      
+
       - name: Extract from API
-        run: ./extract.sh
-        env:
-          ENDPOINT: ${{ inputs.endpoint }}
-          SPORTMONKS_API_TOKEN: ${{ secrets.SPORTMONKS_API_TOKEN }}
+        run: curl -s "https://api.the-odds-api.com/v4/sports/${{ inputs.sport_key }}/odds?apiKey=${{ secrets.THE_ODDS_API_KEY }}" | jq -cr '.[]' > data.json
       
       - name: Load to Google Cloud Storage
-        run: gcloud storage cp *.json gs://the-odds-api/${{ inputs.endpoint }}/*.json
+        run: gcloud storage cp data.json gs://the-odds-api/${{ inputs.sport_key }}/${{ steps.timestamp.outputs.timestamp }}.json
 
       - name: Load to Google BigQuery from Google Cloud Storage
         run: |
           bq load \
             --source_format=NEWLINE_DELIMITED_JSON \
-            --replace \
-            # --schema ${{ inputs.schema }} \
-            the-odds-api.${{ inputs.table }} \
-            gs://the-odds-api/${{ inputs.endpoint }}/*.json
+            the-odds-api.odds \
+            gs://the-odds-api/${{ inputs.sport_key }}/${{ steps.extract.outputs.timestamp }}.json

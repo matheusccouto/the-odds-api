@@ -24,8 +24,9 @@ jobs:
 
   etl:
     needs: sport_key
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/etl.yml
     strategy:
       matrix: ${{fromJSON(needs.sport_key.outputs.matrix)}}
-    steps:
-      - run: echo ${{ matrix.sport_key }}
+    with:
+      sport_key: football/predictions/probabilities
+    secrets: inherit
