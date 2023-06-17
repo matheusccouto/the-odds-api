@@ -1,0 +1,49 @@
+name: ETL
+
+on:
+  workflow_call:
+    inputs:
+      endpoint:
+        required: true
+        type: string
+      table:
+        required: true
+        type: string
+      # schema:
+      #   required: true
+      #   type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  etl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: projects/108686647178/locations/global/workloadIdentityPools/github-sportmonks/providers/github
+          service_account: github-sportmonks@matheusccouto.iam.gserviceaccount.com
+
+      - uses: google-github-actions/setup-gcloud@v1
+
+      - name: Extract from API
+        run: ./extract.sh
+        env:
+          ENDPOINT: ${{ inputs.endpoint }}
+          SPORTMONKS_API_TOKEN: ${{ secrets.SPORTMONKS_API_TOKEN }}
+      
+      - name: Load to Google Cloud Storage
+        run: gcloud storage cp *.json gs://the-odds-api/${{ inputs.endpoint }}/*.json
+
+      - name: Load to Google BigQuery from Google Cloud Storage
+        run: |
+          bq load \
+            --source_format=NEWLINE_DELIMITED_JSON \
+            --replace \
+            # --schema ${{ inputs.schema }} \
+            the-odds-api.${{ inputs.table }} \
+            gs://the-odds-api/${{ inputs.endpoint }}/*.json

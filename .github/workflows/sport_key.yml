@@ -1,0 +1,31 @@
+name: Endpoints
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: 0 0 * * *
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  sport_key:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - id: matrix
+        run: |
+          SPORT_KEY=$(curl -s "https://api.the-odds-api.com/v4/sports?apiKey=${{ secrets.THE_ODDS_API_KEY }}" | jq -r '{ "sport_key": [.[].key] }')
+          echo matrix=$SPORT_KEY >> $GITHUB_OUTPUT
+
+  etl:
+    needs: sport_key
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJSON(needs.sport_key.outputs.matrix)}}
+    steps:
+      - run: echo ${{ matrix.sport_key }}
