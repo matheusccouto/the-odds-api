@@ -40,6 +40,6 @@ jobs:
         run: |
           bq load \
             --source_format=NEWLINE_DELIMITED_JSON \
-            --autodetect
+            --autodetect \
             the_odds_api.odds \
             gs://the-odds-api/${{ inputs.sport_key }}/${{ steps.extract.outputs.timestamp }}.json
