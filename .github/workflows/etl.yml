@@ -31,7 +31,7 @@ jobs:
           echo timestamp=$TIMESTAMP >> $GITHUB_OUTPUT      
 
       - name: Extract from API
-        run: curl -s "https://api.the-odds-api.com/v4/sports/${{ inputs.sport_key }}/odds?apiKey=${{ secrets.THE_ODDS_API_KEY }}?regions=eu&markets=h2h" | jq -cr '.[]' > data.json
+        run: curl -s "https://api.the-odds-api.com/v4/sports/${{ inputs.sport_key }}/odds?apiKey=${{ secrets.THE_ODDS_API_KEY }}&regions=eu&markets=h2h" | jq -cr '.[]' > data.json
       
       - name: Load to Google Cloud Storage
         run: gcloud storage cp data.json gs://the-odds-api/${{ inputs.sport_key }}/${{ steps.timestamp.outputs.timestamp }}.json
@@ -43,3 +43,6 @@ jobs:
             --autodetect \
             the_odds_api.odds \
             gs://the-odds-api/${{ inputs.sport_key }}/${{ steps.timestamp.outputs.timestamp }}.json
+
+      - name: Requests
+        run: echo $(curl -s "https://api.the-odds-api.com/v4/sports/?apiKey=${{ secrets.THE_ODDS_API_KEY }}) | grep -iE "x-requests-(remaining|used)") >> $GITHUB_SUMMARY   
