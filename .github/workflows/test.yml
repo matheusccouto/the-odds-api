@@ -13,5 +13,5 @@ jobs:
   etl:
     uses: ./.github/workflows/etl.yml
     with:
-      sport_key: .github/workflows/sport_key.yml
+      sport_key: soccer_brazil_campeonato
     secrets: inherit
