@@ -1,11 +1,11 @@
 name: Endpoints
 
-on:
-  push:
-    branches:
-      - main
-  schedule:
-    - cron: 0 */12 * * *
+# on:
+#   push:
+#     branches:
+#       - main
+#   schedule:
+#     - cron: 0 */12 * * *
 
 permissions:
   contents: read
@@ -27,6 +27,7 @@ jobs:
     uses: ./.github/workflows/etl.yml
     strategy:
       matrix: ${{fromJSON(needs.sport_key.outputs.matrix)}}
+      max-parallel: 1
     name: ${{ matrix.sport_key }}
     with:
       sport_key: ${{ matrix.sport_key }}
