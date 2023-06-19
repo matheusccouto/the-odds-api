@@ -12,6 +12,7 @@ permissions:
 jobs:
   etl:
     uses: ./.github/workflows/etl.yml
+    name: soccer_brazil_campeonato
     with:
       sport_key: soccer_brazil_campeonato
     secrets: inherit

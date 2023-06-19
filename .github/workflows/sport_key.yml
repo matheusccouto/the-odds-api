@@ -27,6 +27,7 @@ jobs:
     uses: ./.github/workflows/etl.yml
     strategy:
       matrix: ${{fromJSON(needs.sport_key.outputs.matrix)}}
+    name: ${{ matrix.sport_key }}
     with:
       sport_key: ${{ matrix.sport_key }}
     secrets: inherit
