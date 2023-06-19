@@ -1,0 +1,17 @@
+name: Endpoints
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  etl:
+    uses: ./.github/workflows/etl.yml
+    with:
+      sport_key: .github/workflows/sport_key.yml
+    secrets: inherit
