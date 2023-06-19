@@ -46,6 +46,6 @@ jobs:
 
       - name: Requests
         run: |
-          REQUESTS=$(curl -s --head "https://api.the-odds-api.com/v4/sports/?apiKey=${{ secrets.THE_ODDS_API_KEY }})" | grep -iE "x-requests-(remaining|used)")
-          echo $(REQUESTS)
-          echo $(REQUESTS) >> $GITHUB_STEP_SUMMARY   
+          REQUESTS=$(curl -s --head "https://api.the-odds-api.com/v4/sports?apiKey=${{ secrets.THE_ODDS_API_KEY }})" | grep -iE "x-requests-(remaining|used)")
+          echo $REQUESTS
+          echo $REQUESTS >> $GITHUB_STEP_SUMMARY   
